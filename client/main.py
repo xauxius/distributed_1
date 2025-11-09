@@ -1,17 +1,40 @@
-from PIL import Image
-import requests
+# from PIL import Image
+# import requests
 from dotenv import load_dotenv
 import os
+import sys
 
-load_dotenv()
+from textual.app import App, ComposeResult
+from textual.widgets import Footer, Header, DirectoryTree, Input, Log
+from textual.screen import Screen
+from textual.message import Message
+from textual.reactive import reactive
 
-API_BASE_URL = os.getenv("API_BASE_URL")
+from screens import LoginScreen, ImageSelectorScreen, ResultScreen
 
-img = Image.open("data/img1.jpg")
+class Client(App):
+    data: str = "None"
 
-# r = requests.get(API_BASE_URL+"/test")
-with open("data/img1.jpg", "rb") as img_file:
-    files = {"image": img_file}
-    r = requests.post(API_BASE_URL+"/image", files=files)
+    BINDINGS = [
+        ("a", "analyze_image", "Analyze image"),
+        ("v", "view_results", "View Results"),
+        ("r", "refresh", "Refresh")
+        ]
+    
+    def on_mount(self) -> None:
+        self.push_screen(LoginScreen())
 
-    print(r.text)
+    def compose(self) -> ComposeResult:
+        yield Header()
+        yield Footer()
+
+    def action_analyze_image(self) -> None:
+        self.switch_screen(ImageSelectorScreen())
+
+    def action_view_results(self) -> None:
+        self.switch_screen(ResultScreen())
+    
+
+if __name__ == "__main__":
+    app = Client()
+    app.run()

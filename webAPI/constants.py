@@ -1,2 +1,0 @@
-WAITING = "wait"
-WAIT_TIME = 10
